@@ -15,14 +15,41 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { FinancialState, Transaction } from './types';
 
+const getMonthDaysInfo = (date: Date) => {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  
+  let totalWeekdays = 0;
+  let totalWeekends = 0;
+  let remainingWeekdays = 0;
+  let remainingWeekends = 0;
+
+  for (let d = 1; d <= lastDay; d++) {
+    const current = new Date(year, month, d);
+    const dayOfWeek = current.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+    if (isWeekend) {
+      totalWeekends++;
+      if (d >= date.getDate()) remainingWeekends++;
+    } else {
+      totalWeekdays++;
+      if (d >= date.getDate()) remainingWeekdays++;
+    }
+  }
+
+  return { totalWeekdays, totalWeekends, remainingWeekdays, remainingWeekends };
+};
+
 const INITIAL_STATE: FinancialState = {
   income: 0,
   targetSavings: 0,
   livingExpenses: 0,
   weekdayPool: 0,
   weekendPool: 0,
-  weekdayDaysLeft: 22,
-  weekendDaysLeft: 8,
+  weekdayDaysLeft: 0,
+  weekendDaysLeft: 0,
   rolloverToWeekend: 0,
   isInitialized: false,
 };
@@ -53,6 +80,19 @@ export default function App() {
     }
   }, [messages]);
 
+  useEffect(() => {
+    if (state.isInitialized) {
+      const { remainingWeekdays, remainingWeekends } = getMonthDaysInfo(new Date());
+      if (remainingWeekdays !== state.weekdayDaysLeft || remainingWeekends !== state.weekendDaysLeft) {
+        setState(prev => ({
+          ...prev,
+          weekdayDaysLeft: remainingWeekdays,
+          weekendDaysLeft: remainingWeekends
+        }));
+      }
+    }
+  }, [state.isInitialized, state.weekdayDaysLeft, state.weekendDaysLeft]);
+
   const addMessage = (text: string, sender: 'user' | 'coach', type: string = 'info') => {
     setMessages(prev => [...prev, { text, sender, type }]);
   };
@@ -62,14 +102,16 @@ export default function App() {
     const weekdayPool = livingExpenses * 0.45;
     const weekendPool = livingExpenses * 0.55;
 
+    const { totalWeekdays, totalWeekends, remainingWeekdays, remainingWeekends } = getMonthDaysInfo(new Date());
+
     const newState: FinancialState = {
       income,
       targetSavings: savings,
       livingExpenses,
       weekdayPool,
       weekendPool,
-      weekdayDaysLeft: 22,
-      weekendDaysLeft: 8,
+      weekdayDaysLeft: remainingWeekdays,
+      weekendDaysLeft: remainingWeekends,
       rolloverToWeekend: 0,
       isInitialized: true,
     };
@@ -77,10 +119,10 @@ export default function App() {
     setState(newState);
     setTransactions([]);
     
-    const dailyWeekday = (weekdayPool / 22).toFixed(0);
-    const dailyWeekend = (weekendPool / 8).toFixed(0);
+    const dailyWeekday = (weekdayPool / totalWeekdays).toFixed(0);
+    const dailyWeekend = (weekendPool / totalWeekends).toFixed(0);
 
-    addMessage(`初始化成功！\n\n💰 月入：$${income}\n🎯 儲蓄：$${savings}\n🏠 生活費：$${livingExpenses}\n\n📅 平日每日預算：$${dailyWeekday}\n🎉 週末每日預算：$${dailyWeekend}\n\n記住，平日省下的錢會自動滾入週末。祝你自律愉快。`, 'coach', 'success');
+    addMessage(`初始化成功！(本月週期：1號至月底)\n\n💰 月入：$${income}\n🎯 儲蓄：$${savings}\n🏠 生活費：$${livingExpenses}\n\n📅 本月平日總數：${totalWeekdays} 天\n🎉 本月週末總數：${totalWeekends} 天\n\n💡 平日每日預算：$${dailyWeekday}\n💡 週末每日預算：$${dailyWeekend}\n\n記住，平日省下的錢會自動滾入週末。祝你自律愉快。`, 'coach', 'success');
   };
 
   const handleExpense = (amount: number, category: string) => {
@@ -89,12 +131,15 @@ export default function App() {
       return;
     }
 
-    const isWeekend = [0, 6].includes(new Date().getDay());
+    const now = new Date();
+    const isWeekend = [0, 6].includes(now.getDay());
+    const { remainingWeekdays, remainingWeekends } = getMonthDaysInfo(now);
+
     const newTransaction: Transaction = {
       id: Math.random().toString(36).substr(2, 9),
       amount,
       category,
-      date: new Date().toISOString(),
+      date: now.toISOString(),
       isWeekend,
     };
 
@@ -102,10 +147,14 @@ export default function App() {
 
     setState(prev => {
       let updated = { ...prev };
+      const currentRemaining = isWeekend ? remainingWeekends : remainingWeekdays;
+      const dailyLimit = isWeekend 
+        ? prev.weekendPool / currentRemaining
+        : prev.weekdayPool / currentRemaining;
+
       if (isWeekend) {
         updated.weekendPool -= amount;
       } else {
-        const dailyLimit = prev.weekdayPool / prev.weekdayDaysLeft;
         updated.weekdayPool -= amount;
         
         if (amount < dailyLimit) {
@@ -114,12 +163,17 @@ export default function App() {
           updated.weekendPool += savings;
         }
       }
+      
+      updated.weekdayDaysLeft = remainingWeekdays;
+      updated.weekendDaysLeft = remainingWeekends;
+      
       return updated;
     });
 
+    const currentRemaining = isWeekend ? remainingWeekends : remainingWeekdays;
     const dailyLimit = isWeekend 
-      ? (state.weekendPool - amount) / state.weekendDaysLeft 
-      : (state.weekdayPool - amount) / state.weekdayDaysLeft;
+      ? (state.weekendPool - amount) / currentRemaining 
+      : (state.weekdayPool - amount) / currentRemaining;
 
     const advice = amount > 1000 
       ? "這筆支出有點驚人，你是打算把下個月的飯錢也吃掉嗎？" 
