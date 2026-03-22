@@ -276,8 +276,38 @@ export default function App() {
                   <div className="text-3xl font-light tracking-tight mb-1 text-white">
                     ${state.weekdayPool.toFixed(0)}
                   </div>
-                  <div className="text-xs text-white/30 font-medium">
+                  <div className="text-xs text-white/30 font-medium mb-4">
                     剩餘 {state.weekdayDaysLeft} 天 • 每日約 ${(state.weekdayPool / state.weekdayDaysLeft).toFixed(0)}
+                  </div>
+                  
+                  {/* Progress Bars */}
+                  <div className="space-y-3 pt-2 border-t border-white/5">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/30 font-bold">
+                        <span>總剩餘金額</span>
+                        <span>{Math.round((state.weekdayPool / (state.livingExpenses * 0.45 || 1)) * 100)}%</span>
+                      </div>
+                      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min(100, (state.weekdayPool / (state.livingExpenses * 0.45 || 1)) * 100)}%` }}
+                          className="h-full bg-blue-500"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/30 font-bold">
+                        <span>每日可使用</span>
+                        <span>{Math.round(((state.weekdayPool / (state.weekdayDaysLeft || 1)) / ((state.livingExpenses * 0.45 / (getMonthDaysInfo(new Date()).totalWeekdays || 1)) || 1)) * 100)}%</span>
+                      </div>
+                      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min(100, ((state.weekdayPool / (state.weekdayDaysLeft || 1)) / ((state.livingExpenses * 0.45 / (getMonthDaysInfo(new Date()).totalWeekdays || 1)) || 1)) * 100)}%` }}
+                          className="h-full bg-emerald-500"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
 
@@ -294,8 +324,38 @@ export default function App() {
                   <div className="text-3xl font-light tracking-tight mb-1 text-white">
                     ${state.weekendPool.toFixed(0)}
                   </div>
-                  <div className="text-xs text-white/30 font-medium">
+                  <div className="text-xs text-white/30 font-medium mb-4">
                     剩餘 {state.weekendDaysLeft} 天 • 每日約 ${(state.weekendPool / state.weekendDaysLeft).toFixed(0)}
+                  </div>
+
+                  {/* Progress Bars */}
+                  <div className="space-y-3 pt-2 border-t border-white/5">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/30 font-bold">
+                        <span>總剩餘金額</span>
+                        <span>{Math.round((state.weekendPool / (state.livingExpenses * 0.55 || 1)) * 100)}%</span>
+                      </div>
+                      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min(100, (state.weekendPool / (state.livingExpenses * 0.55 || 1)) * 100)}%` }}
+                          className="h-full bg-amber-500"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/30 font-bold">
+                        <span>每日可使用</span>
+                        <span>{Math.round(((state.weekendPool / (state.weekendDaysLeft || 1)) / ((state.livingExpenses * 0.55 / (getMonthDaysInfo(new Date()).totalWeekends || 1)) || 1)) * 100)}%</span>
+                      </div>
+                      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min(100, ((state.weekendPool / (state.weekendDaysLeft || 1)) / ((state.livingExpenses * 0.55 / (getMonthDaysInfo(new Date()).totalWeekends || 1)) || 1)) * 100)}%` }}
+                          className="h-full bg-emerald-500"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               </div>
@@ -329,19 +389,9 @@ export default function App() {
                       { label: '收息/現金流 (30%)', value: 0.3, color: 'bg-blue-500' },
                       { label: '衛星投資 (10%)', value: 0.1, color: 'bg-amber-500' },
                     ].map((item, i) => (
-                      <div key={i} className="space-y-2">
-                        <div className="flex justify-between text-xs font-medium">
-                          <span className="text-white/60">{item.label}</span>
-                          <span className="text-white/80">${(state.targetSavings * 0.6 * item.value).toFixed(0)}</span>
-                        </div>
-                        <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                          <motion.div 
-                            initial={{ width: 0 }}
-                            animate={{ width: `${item.value * 100}%` }}
-                            transition={{ delay: 0.2 + i * 0.1 }}
-                            className={`h-full ${item.color}`}
-                          />
-                        </div>
+                      <div key={i} className="flex justify-between items-center py-1 border-b border-white/5 last:border-0">
+                        <span className="text-xs text-white/60">{item.label}</span>
+                        <span className="text-sm font-medium text-white/90">${(state.targetSavings * 0.6 * item.value).toFixed(0)}</span>
                       </div>
                     ))}
                   </div>
