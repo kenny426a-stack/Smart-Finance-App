@@ -402,10 +402,48 @@ export default function App() {
               </div>
             </div>
 
+            {/* Input Area (Moved to Top for convenience) */}
+            <div className="p-4 bg-[#1A1B1E] border-b border-white/5">
+              <form 
+                onSubmit={(e) => { e.preventDefault(); if(input.trim()) processCommand(input); }}
+                className="relative"
+              >
+                <input 
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="輸入指令 (例如：支出 100 午餐)..."
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-5 pr-14 text-sm focus:ring-2 focus:ring-emerald-500 transition-all outline-none text-white placeholder:text-white/20 shadow-inner"
+                />
+                <button 
+                  type="submit"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 w-10 h-10 bg-emerald-500 text-white rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all active:scale-95 flex items-center justify-center"
+                >
+                  <ArrowRight size={20} />
+                </button>
+              </form>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {[
+                  { label: '初始化', cmd: '初始化：月入 50000, 儲蓄 20000', icon: <PiggyBank size={12} /> },
+                  { label: '記支出', cmd: '支出：150, 午餐', icon: <Wallet size={12} /> },
+                  { label: '投資狀態', cmd: '投資狀態', icon: <TrendingUp size={12} /> },
+                ].map((btn, i) => (
+                  <button 
+                    key={i}
+                    onClick={() => setInput(btn.cmd)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 text-[10px] font-bold uppercase tracking-wider text-white/40 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all border border-white/5"
+                  >
+                    {btn.icon}
+                    {btn.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Messages */}
             <div 
               ref={scrollRef}
-              className="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth"
+              className="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth bg-[#151619]/50"
             >
               {messages.length === 0 && (
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-20">
@@ -438,42 +476,7 @@ export default function App() {
               ))}
             </div>
 
-            {/* Input */}
-            <div className="p-4 bg-[#151619] border-t border-white/5">
-              <form 
-                onSubmit={(e) => { e.preventDefault(); if(input.trim()) processCommand(input); }}
-                className="relative"
-              >
-                <input 
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="輸入指令..."
-                  className="w-full bg-white/5 border border-white/5 rounded-2xl py-3 pl-4 pr-12 text-sm focus:ring-2 focus:ring-emerald-500 transition-all outline-none text-white placeholder:text-white/20"
-                />
-                <button 
-                  type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-emerald-500 text-white rounded-xl shadow-md shadow-emerald-500/20 hover:bg-emerald-600 transition-colors"
-                >
-                  <ArrowRight size={18} />
-                </button>
-              </form>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {[
-                  { label: '初始化', cmd: '初始化：月入 50000, 儲蓄 20000' },
-                  { label: '記支出', cmd: '支出：150, 午餐' },
-                  { label: '投資狀態', cmd: '投資狀態' },
-                ].map((btn, i) => (
-                  <button 
-                    key={i}
-                    onClick={() => setInput(btn.cmd)}
-                    className="text-[10px] font-bold uppercase tracking-wider text-white/20 hover:text-emerald-400 transition-colors"
-                  >
-                    {btn.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Footer removed as input moved to top */}
           </div>
         </div>
       </main>
