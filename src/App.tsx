@@ -227,6 +227,11 @@ export default function App() {
   const dailyBudgetWeekday = state.weekdayDaysLeft > 0 ? (state.weekdayPool + todaySpentWeekday) / state.weekdayDaysLeft : 0;
   const dailyBudgetWeekend = state.weekendDaysLeft > 0 ? (state.weekendPool + todaySpentWeekend) / state.weekendDaysLeft : 0;
 
+  const isWeekendToday = new Date().getDay() === 0 || new Date().getDay() === 6;
+  const currentDailyBudget = isWeekendToday ? dailyBudgetWeekend : dailyBudgetWeekday;
+  const currentTodaySpent = isWeekendToday ? todaySpentWeekend : todaySpentWeekday;
+  const remainingTodayBudget = currentDailyBudget - currentTodaySpent;
+
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white font-sans selection:bg-emerald-500/30">
       {/* Header */}
@@ -292,35 +297,25 @@ export default function App() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-3xl font-bold text-emerald-400">
-                        ${(new Date().getDay() === 0 || new Date().getDay() === 6 ? dailyBudgetWeekend : dailyBudgetWeekday).toFixed(0)}
+                      <div className={`text-3xl font-bold ${remainingTodayBudget < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+                        ${remainingTodayBudget.toFixed(0)}
                       </div>
-                      <div className="text-[10px] uppercase tracking-widest text-white/30 font-bold">今日可動用</div>
+                      <div className="text-[10px] uppercase tracking-widest text-white/30 font-bold">今日剩餘可用</div>
                     </div>
                   </div>
 
                   <div className="space-y-2 mb-8">
                     <div className="flex justify-between text-xs font-bold text-white/60">
                       <span>今日消費進度</span>
-                      <span className={
-                        (new Date().getDay() === 0 || new Date().getDay() === 6 ? todaySpentWeekend : todaySpentWeekday) > 
-                        (new Date().getDay() === 0 || new Date().getDay() === 6 ? dailyBudgetWeekend : dailyBudgetWeekday) 
-                        ? 'text-red-400' : 'text-emerald-400'
-                      }>
-                        {Math.round(((new Date().getDay() === 0 || new Date().getDay() === 6 ? todaySpentWeekend : todaySpentWeekday) / 
-                        (new Date().getDay() === 0 || new Date().getDay() === 6 ? dailyBudgetWeekend : dailyBudgetWeekday || 1)) * 100)}%
+                      <span className={remainingTodayBudget < 0 ? 'text-red-400' : 'text-emerald-400'}>
+                        {Math.round((currentTodaySpent / (currentDailyBudget || 1)) * 100)}%
                       </span>
                     </div>
                     <div className="h-2 bg-white/5 rounded-full overflow-hidden">
                       <motion.div 
                         initial={{ width: 0 }}
-                        animate={{ width: `${Math.min(100, ((new Date().getDay() === 0 || new Date().getDay() === 6 ? todaySpentWeekend : todaySpentWeekday) / 
-                        (new Date().getDay() === 0 || new Date().getDay() === 6 ? dailyBudgetWeekend : dailyBudgetWeekday || 1)) * 100)}%` }}
-                        className={`h-full transition-colors duration-500 ${
-                          (new Date().getDay() === 0 || new Date().getDay() === 6 ? todaySpentWeekend : todaySpentWeekday) > 
-                          (new Date().getDay() === 0 || new Date().getDay() === 6 ? dailyBudgetWeekend : dailyBudgetWeekday) 
-                          ? 'bg-red-500' : 'bg-emerald-500'
-                        }`}
+                        animate={{ width: `${Math.min(100, (currentTodaySpent / (currentDailyBudget || 1)) * 100)}%` }}
+                        className={`h-full transition-colors duration-500 ${remainingTodayBudget < 0 ? 'bg-red-500' : 'bg-emerald-500'}`}
                       />
                     </div>
                   </div>
