@@ -10,7 +10,9 @@ import {
   AlertCircle,
   CheckCircle2,
   RefreshCcw,
-  PiggyBank
+  PiggyBank,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { FinancialState, Transaction } from './types';
@@ -66,6 +68,7 @@ export default function App() {
   });
 
   const [input, setInput] = useState('');
+  const [showInvestDetails, setShowInvestDetails] = useState(false);
   const [messages, setMessages] = useState<{ text: string; sender: 'user' | 'coach'; type?: string }[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -269,6 +272,82 @@ export default function App() {
             </motion.div>
           ) : (
             <>
+              {/* Top Summary & Quick Input Box */}
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-[#1A1B1E] p-6 rounded-3xl border border-emerald-500/20 shadow-2xl shadow-emerald-500/5 relative overflow-hidden"
+              >
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400">
+                        <Wallet size={24} />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg">今日預算概覽</h3>
+                        <p className="text-xs text-white/40 uppercase tracking-widest font-bold">
+                          {new Date().getDay() === 0 || new Date().getDay() === 6 ? 'Weekend Mode' : 'Weekday Mode'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-3xl font-bold text-emerald-400">
+                        ${(new Date().getDay() === 0 || new Date().getDay() === 6 ? dailyBudgetWeekend : dailyBudgetWeekday).toFixed(0)}
+                      </div>
+                      <div className="text-[10px] uppercase tracking-widest text-white/30 font-bold">今日可動用</div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 mb-8">
+                    <div className="flex justify-between text-xs font-bold text-white/60">
+                      <span>今日消費進度</span>
+                      <span className={
+                        (new Date().getDay() === 0 || new Date().getDay() === 6 ? todaySpentWeekend : todaySpentWeekday) > 
+                        (new Date().getDay() === 0 || new Date().getDay() === 6 ? dailyBudgetWeekend : dailyBudgetWeekday) 
+                        ? 'text-red-400' : 'text-emerald-400'
+                      }>
+                        {Math.round(((new Date().getDay() === 0 || new Date().getDay() === 6 ? todaySpentWeekend : todaySpentWeekday) / 
+                        (new Date().getDay() === 0 || new Date().getDay() === 6 ? dailyBudgetWeekend : dailyBudgetWeekday || 1)) * 100)}%
+                      </span>
+                    </div>
+                    <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(100, ((new Date().getDay() === 0 || new Date().getDay() === 6 ? todaySpentWeekend : todaySpentWeekday) / 
+                        (new Date().getDay() === 0 || new Date().getDay() === 6 ? dailyBudgetWeekend : dailyBudgetWeekday || 1)) * 100)}%` }}
+                        className={`h-full transition-colors duration-500 ${
+                          (new Date().getDay() === 0 || new Date().getDay() === 6 ? todaySpentWeekend : todaySpentWeekday) > 
+                          (new Date().getDay() === 0 || new Date().getDay() === 6 ? dailyBudgetWeekend : dailyBudgetWeekday) 
+                          ? 'bg-red-500' : 'bg-emerald-500'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Quick Input */}
+                  <form 
+                    onSubmit={(e) => { e.preventDefault(); if(input.trim()) processCommand(input); }}
+                    className="relative"
+                  >
+                    <input 
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder="快速記帳 (例如：支出 50 咖啡)..."
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-5 pr-14 text-sm focus:ring-2 focus:ring-emerald-500 transition-all outline-none text-white placeholder:text-white/20"
+                    />
+                    <button 
+                      type="submit"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-emerald-500 text-white rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all active:scale-95 flex items-center justify-center"
+                    >
+                      <ArrowRight size={20} />
+                    </button>
+                  </form>
+                </div>
+                <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/5 blur-3xl rounded-full" />
+              </motion.div>
+
               {/* Stats Grid */}
               <div className="grid grid-cols-2 gap-4">
                 <motion.div 
@@ -368,44 +447,65 @@ export default function App() {
                 </motion.div>
               </div>
 
-              {/* Investment Card */}
+              {/* Investment Card (Collapsible) */}
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-[#1A1B1E] text-white p-8 rounded-3xl shadow-2xl border border-white/5 relative overflow-hidden"
+                className="bg-[#1A1B1E] text-white rounded-3xl shadow-2xl border border-white/5 relative overflow-hidden"
               >
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
-                        <TrendingUp size={20} className="text-emerald-400" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium">投資配置 (6-3-1)</h3>
-                        <p className="text-xs text-white/40">基於儲蓄額的 60%</p>
-                      </div>
+                <button 
+                  onClick={() => setShowInvestDetails(!showInvestDetails)}
+                  className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-colors text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
+                      <TrendingUp size={20} className="text-emerald-400" />
                     </div>
+                    <div>
+                      <h3 className="font-medium">投資配置 (6-3-1)</h3>
+                      <p className="text-xs text-white/40">基於儲蓄額的 60%</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <div className="text-2xl font-light">${(state.targetSavings * 0.6).toFixed(0)}</div>
+                      <div className="text-xl font-light">${(state.targetSavings * 0.6).toFixed(0)}</div>
                       <div className="text-[10px] uppercase tracking-widest text-white/30 font-bold">Total Investable</div>
                     </div>
+                    <div className="text-white/20">
+                      {showInvestDetails ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                    </div>
                   </div>
+                </button>
 
-                  <div className="space-y-4">
-                    {[
-                      { label: '指數基金 (60%)', value: 0.6, color: 'bg-emerald-500' },
-                      { label: '收息/現金流 (30%)', value: 0.3, color: 'bg-blue-500' },
-                      { label: '衛星投資 (10%)', value: 0.1, color: 'bg-amber-500' },
-                    ].map((item, i) => (
-                      <div key={i} className="flex justify-between items-center py-1 border-b border-white/5 last:border-0">
-                        <span className="text-xs text-white/60">{item.label}</span>
-                        <span className="text-sm font-medium text-white/90">${(state.targetSavings * 0.6 * item.value).toFixed(0)}</span>
+                <AnimatePresence>
+                  {showInvestDetails && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-6 pt-2 space-y-4 border-t border-white/5">
+                        {[
+                          { label: '指數基金 (60%)', value: 0.6, color: 'bg-emerald-500' },
+                          { label: '收息/現金流 (30%)', value: 0.3, color: 'bg-blue-500' },
+                          { label: '衛星投資 (10%)', value: 0.1, color: 'bg-amber-500' },
+                        ].map((item, i) => (
+                          <div key={i} className="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
+                            <span className="text-xs text-white/60">{item.label}</span>
+                            <span className="text-sm font-medium text-white/90">${(state.targetSavings * 0.6 * item.value).toFixed(0)}</span>
+                          </div>
+                        ))}
+                        <p className="text-[10px] text-white/20 italic mt-4">
+                          * 建議定期平衡資產配置，以維持風險與收益的平衡。
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                
                 {/* Decorative element */}
-                <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/5 blur-3xl rounded-full" />
+                <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/5 blur-3xl rounded-full pointer-events-none" />
               </motion.div>
 
               {/* Recent Transactions */}
