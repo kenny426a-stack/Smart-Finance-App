@@ -52,7 +52,6 @@ const INITIAL_STATE: FinancialState = {
   weekendPool: 0,
   weekdayDaysLeft: 0,
   weekendDaysLeft: 0,
-  rolloverToWeekend: 0,
   isInitialized: false,
 };
 
@@ -125,7 +124,6 @@ export default function App() {
       weekendPool,
       weekdayDaysLeft: remainingWeekdays,
       weekendDaysLeft: remainingWeekends,
-      rolloverToWeekend: 0,
       isInitialized: true,
     };
 
@@ -135,7 +133,7 @@ export default function App() {
     const dailyWeekday = (weekdayPool / totalWeekdays).toFixed(0);
     const dailyWeekend = (weekendPool / totalWeekends).toFixed(0);
 
-    addMessage(`初始化成功！(本月週期：1號至月底)\n\n💰 月入：$${income}\n🎯 儲蓄：$${savings}\n🏠 生活費：$${livingExpenses}\n\n📅 本月平日總數：${totalWeekdays} 天\n🎉 本月週末總數：${totalWeekends} 天\n\n💡 平日每日預算：$${dailyWeekday}\n💡 週末每日預算：$${dailyWeekend}\n\n記住，平日省下的錢會自動滾入週末。祝你自律愉快。`, 'coach', 'success');
+    addMessage(`初始化成功！(本月週期：1號至月底)\n\n💰 月入：$${income}\n🎯 儲蓄：$${savings}\n🏠 生活費：$${livingExpenses}\n\n📅 本月平日總數：${totalWeekdays} 天\n🎉 本月週末總數：${totalWeekends} 天\n\n💡 平日每日預算：$${dailyWeekday}\n💡 週末每日預算：$${dailyWeekend}\n\n記住，平日與週末預算獨立計算，每日剩餘金額將平均分配至該池剩餘日子。祝你自律愉快。`, 'coach', 'success');
   };
 
   const handleExpense = (amount: number, category: string) => {
@@ -158,23 +156,18 @@ export default function App() {
 
     setTransactions(prev => [newTransaction, ...prev]);
 
+    const currentRemaining = isWeekend ? remainingWeekends : remainingWeekdays;
+    const dailyLimit = isWeekend 
+      ? state.weekendPool / currentRemaining 
+      : state.weekdayPool / currentRemaining;
+
     setState(prev => {
       let updated = { ...prev };
-      const currentRemaining = isWeekend ? remainingWeekends : remainingWeekdays;
-      const dailyLimit = isWeekend 
-        ? prev.weekendPool / currentRemaining
-        : prev.weekdayPool / currentRemaining;
-
+      
       if (isWeekend) {
         updated.weekendPool -= amount;
       } else {
         updated.weekdayPool -= amount;
-        
-        if (amount < dailyLimit) {
-          const savings = dailyLimit - amount;
-          updated.rolloverToWeekend += savings;
-          updated.weekendPool += savings;
-        }
       }
       
       updated.weekdayDaysLeft = remainingWeekdays;
@@ -183,18 +176,13 @@ export default function App() {
       return updated;
     });
 
-    const currentRemaining = isWeekend ? remainingWeekends : remainingWeekdays;
-    const dailyLimit = isWeekend 
-      ? (state.weekendPool - amount) / currentRemaining 
-      : (state.weekdayPool - amount) / currentRemaining;
-
     const advice = amount > 1000 
       ? "這筆支出有點驚人，你是打算把下個月的飯錢也吃掉嗎？" 
       : amount > dailyLimit 
         ? "超支警告！你今天的消費已經超過了平均限額，請克制。" 
-        : "不錯的控制，省下的錢會讓你週末過得更體面。";
+        : "不錯的控制，省下的錢會平均分配到剩餘的同類日子。";
     
-    addMessage(`記錄支出：$${amount} (${category})\n\n${advice}\n\n📊 當前池狀態：\n平日池剩餘：$${(isWeekend ? state.weekdayPool : state.weekdayPool - amount).toFixed(0)}\n週末池剩餘：$${(isWeekend ? state.weekendPool - amount : state.weekendPool).toFixed(0)}\n當日剩餘可用額度：$${Math.max(0, dailyLimit).toFixed(0)}\n週末基金增量：$${state.rolloverToWeekend.toFixed(0)}`, 'coach', amount > dailyLimit ? 'warning' : 'success');
+    addMessage(`記錄支出：$${amount} (${category})\n\n${advice}\n\n📊 當前池狀態：\n平日池剩餘：$${(isWeekend ? state.weekdayPool : state.weekdayPool - amount).toFixed(0)}\n週末池剩餘：$${(isWeekend ? state.weekendPool - amount : state.weekendPool).toFixed(0)}\n當日建議可用額度：$${Math.max(0, dailyLimit).toFixed(0)}`, 'coach', amount > dailyLimit ? 'warning' : 'success');
   };
 
   const handleInvestmentStatus = () => {

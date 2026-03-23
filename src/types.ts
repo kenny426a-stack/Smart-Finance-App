@@ -6,7 +6,6 @@ export interface FinancialState {
   weekendPool: number;
   weekdayDaysLeft: number;
   weekendDaysLeft: number;
-  rolloverToWeekend: number;
   isInitialized: boolean;
 }
 
