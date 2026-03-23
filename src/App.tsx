@@ -111,8 +111,8 @@ export default function App() {
 
   const handleInitialize = (income: number, savings: number) => {
     const livingExpenses = income - savings;
-    const weekdayPool = livingExpenses * 0.45;
-    const weekendPool = livingExpenses * 0.55;
+    const weekdayPool = livingExpenses * 0.5;
+    const weekendPool = livingExpenses * 0.5;
 
     const { totalWeekdays, totalWeekends, remainingWeekdays, remainingWeekends } = getMonthDaysInfo(new Date());
 
@@ -381,7 +381,7 @@ export default function App() {
                     <div className="w-8 h-8 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400">
                       <Calendar size={18} />
                     </div>
-                    <span className="text-sm font-medium text-white/40">平日池 (45%)</span>
+                    <span className="text-sm font-medium text-white/40">平日池 (50%)</span>
                   </div>
                   <div className="text-3xl font-light tracking-tight mb-1 text-white">
                     ${state.weekdayPool.toFixed(0)}
@@ -395,12 +395,12 @@ export default function App() {
                     <div className="space-y-1">
                       <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/30 font-bold">
                         <span>總剩餘金額</span>
-                        <span>{Math.round((state.weekdayPool / (state.livingExpenses * 0.45 || 1)) * 100)}%</span>
+                        <span>{Math.round((state.weekdayPool / (state.livingExpenses * 0.5 || 1)) * 100)}%</span>
                       </div>
                       <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                         <motion.div 
                           initial={{ width: 0 }}
-                          animate={{ width: `${Math.min(100, (state.weekdayPool / (state.livingExpenses * 0.45 || 1)) * 100)}%` }}
+                          animate={{ width: `${Math.min(100, (state.weekdayPool / (state.livingExpenses * 0.5 || 1)) * 100)}%` }}
                           className="h-full bg-blue-500"
                         />
                       </div>
@@ -416,7 +416,7 @@ export default function App() {
                     <div className="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center text-amber-400">
                       <Calendar size={18} />
                     </div>
-                    <span className="text-sm font-medium text-white/40">週末池 (55%)</span>
+                    <span className="text-sm font-medium text-white/40">週末池 (50%)</span>
                   </div>
                   <div className="text-3xl font-light tracking-tight mb-1 text-white">
                     ${state.weekendPool.toFixed(0)}
@@ -430,12 +430,12 @@ export default function App() {
                     <div className="space-y-1">
                       <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/30 font-bold">
                         <span>總剩餘金額</span>
-                        <span>{Math.round((state.weekendPool / (state.livingExpenses * 0.55 || 1)) * 100)}%</span>
+                        <span>{Math.round((state.weekendPool / (state.livingExpenses * 0.5 || 1)) * 100)}%</span>
                       </div>
                       <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                         <motion.div 
                           initial={{ width: 0 }}
-                          animate={{ width: `${Math.min(100, (state.weekendPool / (state.livingExpenses * 0.55 || 1)) * 100)}%` }}
+                          animate={{ width: `${Math.min(100, (state.weekendPool / (state.livingExpenses * 0.5 || 1)) * 100)}%` }}
                           className="h-full bg-amber-500"
                         />
                       </div>
