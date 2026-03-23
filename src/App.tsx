@@ -380,19 +380,6 @@ export default function App() {
                         />
                       </div>
                     </div>
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/30 font-bold">
-                        <span>今日已使用</span>
-                        <span>{dailyBudgetWeekday > 0 ? Math.round((todaySpentWeekday / dailyBudgetWeekday) * 100) : 0}%</span>
-                      </div>
-                      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                        <motion.div 
-                          initial={{ width: 0 }}
-                          animate={{ width: `${Math.min(100, dailyBudgetWeekday > 0 ? (todaySpentWeekday / dailyBudgetWeekday) * 100 : 0)}%` }}
-                          className={`h-full ${todaySpentWeekday > dailyBudgetWeekday ? 'bg-red-500' : 'bg-emerald-500'}`}
-                        />
-                      </div>
-                    </div>
                   </div>
                 </motion.div>
 
@@ -425,19 +412,6 @@ export default function App() {
                           initial={{ width: 0 }}
                           animate={{ width: `${Math.min(100, (state.weekendPool / (state.livingExpenses * 0.55 || 1)) * 100)}%` }}
                           className="h-full bg-amber-500"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-[10px] uppercase tracking-wider text-white/30 font-bold">
-                        <span>今日已使用</span>
-                        <span>{dailyBudgetWeekend > 0 ? Math.round((todaySpentWeekend / dailyBudgetWeekend) * 100) : 0}%</span>
-                      </div>
-                      <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                        <motion.div 
-                          initial={{ width: 0 }}
-                          animate={{ width: `${Math.min(100, dailyBudgetWeekend > 0 ? (todaySpentWeekend / dailyBudgetWeekend) * 100 : 0)}%` }}
-                          className={`h-full ${todaySpentWeekend > dailyBudgetWeekend ? 'bg-red-500' : 'bg-emerald-500'}`}
                         />
                       </div>
                     </div>
