@@ -100,6 +100,16 @@ export default function App() {
     setMessages(prev => [...prev, { text, sender, type }]);
   };
 
+  const [showPWATip, setShowPWATip] = useState(false);
+
+  useEffect(() => {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isStandalone = (window.navigator as any).standalone || window.matchMedia('(display-mode: standalone)').matches;
+    if (isIOS && !isStandalone) {
+      setShowPWATip(true);
+    }
+  }, []);
+
   const handleInitialize = (income: number, savings: number) => {
     const livingExpenses = income - savings;
     const weekdayPool = livingExpenses * 0.45;
@@ -237,6 +247,33 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white font-sans selection:bg-emerald-500/30">
+      {/* iOS PWA Tip */}
+      <AnimatePresence>
+        {showPWATip && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-emerald-500 text-white overflow-hidden"
+          >
+            <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between text-xs font-bold">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-white/20 rounded-md flex items-center justify-center">
+                  <ArrowRight size={14} className="-rotate-90" />
+                </div>
+                <span>點擊瀏覽器「分享」按鈕並選擇「加入主畫面」，即可像 App 一樣使用！</span>
+              </div>
+              <button 
+                onClick={() => setShowPWATip(false)}
+                className="p-1 hover:bg-black/10 rounded-full transition-colors"
+              >
+                <RefreshCcw size={14} className="rotate-45" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <header className="bg-[#0A0A0A]/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
