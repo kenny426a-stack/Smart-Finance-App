@@ -206,15 +206,18 @@ export default function App() {
     
     const initMatch = cmd.match(/初始化：月入\s*(\d+),\s*儲蓄\s*(\d+)/);
     const expenseMatch = cmd.match(/支出：\s*(\d+),\s*(.+)/);
+    const quickExpenseMatch = cmd.match(/^(\d+)\s+(.+)$/);
     
     if (initMatch) {
       handleInitialize(Number(initMatch[1]), Number(initMatch[2]));
     } else if (expenseMatch) {
       handleExpense(Number(expenseMatch[1]), expenseMatch[2]);
+    } else if (quickExpenseMatch) {
+      handleExpense(Number(quickExpenseMatch[1]), quickExpenseMatch[2]);
     } else if (cmd.includes('投資狀態')) {
       handleInvestmentStatus();
     } else {
-      addMessage('我不明白這個指令。請使用：\n1. 初始化：月入 [金額], 儲蓄 [金額]\n2. 支出：[金額], [類別]\n3. 投資狀態', 'coach', 'error');
+      addMessage('我不明白這個指令。請使用：\n1. 初始化：月入 [金額], 儲蓄 [金額]\n2. 支出：[金額], [類別]\n3. 快速記帳：[金額] [類別] (例如：100 午餐)\n4. 投資狀態', 'coach', 'error');
     }
     setInput('');
   };
@@ -329,7 +332,7 @@ export default function App() {
                       type="text"
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      placeholder="快速記帳 (例如：支出 50 咖啡)..."
+                      placeholder="快速記帳 (例如：100 午餐)..."
                       className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-5 pr-14 text-sm focus:ring-2 focus:ring-emerald-500 transition-all outline-none text-white placeholder:text-white/20"
                     />
                     <button 
@@ -565,7 +568,7 @@ export default function App() {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="輸入指令 (例如：支出 100 午餐)..."
+                  placeholder="輸入指令 (例如：100 午餐)..."
                   className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-5 pr-14 text-sm focus:ring-2 focus:ring-emerald-500 transition-all outline-none text-white placeholder:text-white/20 shadow-inner"
                 />
                 <button 
