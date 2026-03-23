@@ -278,8 +278,8 @@ export default function App() {
       <header className="bg-[#0A0A0A]/80 backdrop-blur-md border-b border-white/5 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-              <TrendingUp size={24} />
+            <div className="w-10 h-10 bg-black border border-white/10 rounded-xl flex items-center justify-center text-emerald-500 shadow-lg shadow-emerald-500/10">
+              <Wallet size={24} />
             </div>
             <div>
               <h1 className="text-lg font-semibold tracking-tight">Smart Finance</h1>
