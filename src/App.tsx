@@ -282,7 +282,7 @@ export default function App() {
               <TrendingUp size={24} />
             </div>
             <div>
-              <h1 className="text-lg font-semibold tracking-tight">Smart Finance Coach</h1>
+              <h1 className="text-lg font-semibold tracking-tight">Smart Finance</h1>
               <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Professional Budgeting</p>
             </div>
           </div>
