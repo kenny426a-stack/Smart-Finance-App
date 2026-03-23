@@ -330,12 +330,7 @@ export default function App() {
                         <Wallet size={24} />
                       </div>
                       <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-bold text-lg">今日預算概覽</h3>
-                          <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded-full text-white/40 font-mono">
-                            {new Date().toLocaleDateString('zh-HK', { year: 'numeric', month: 'long', day: 'numeric' })}
-                          </span>
-                        </div>
+                        <h3 className="font-bold text-lg">今日預算概覽</h3>
                         <p className="text-xs text-white/40 uppercase tracking-widest font-bold">
                           {new Date().getDay() === 0 || new Date().getDay() === 6 ? 'Weekend Mode' : 'Weekday Mode'}
                         </p>
