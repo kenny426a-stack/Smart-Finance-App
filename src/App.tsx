@@ -233,6 +233,10 @@ export default function App() {
   const currentTodaySpent = isWeekendToday ? todaySpentWeekend : todaySpentWeekday;
   const remainingTodayBudget = currentDailyBudget - currentTodaySpent;
 
+  const totalSpentMonth = transactions.reduce((sum, t) => sum + t.amount, 0);
+  const totalBudgetMonth = state.livingExpenses;
+  const monthProgress = totalBudgetMonth > 0 ? (totalSpentMonth / totalBudgetMonth) * 100 : 0;
+
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white font-sans selection:bg-emerald-500/30">
       {/* iOS PWA Tip */}
@@ -288,6 +292,50 @@ export default function App() {
       <main className="max-w-5xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Dashboard */}
         <div className="lg:col-span-7 space-y-6">
+          {state.isInitialized && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-[#1A1B1E] p-6 rounded-3xl border border-white/5 shadow-xl"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-emerald-400">
+                    <PieChart size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm">本月預算進度</h3>
+                    <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Monthly Spending</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xl font-bold text-white">
+                    ${totalSpentMonth.toFixed(0)} <span className="text-white/20 text-sm font-medium">/ ${totalBudgetMonth.toFixed(0)}</span>
+                  </div>
+                  <div className="text-[10px] uppercase tracking-widest text-white/30 font-bold">已使用 / 總額</div>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between text-[10px] font-bold text-white/40 uppercase tracking-wider">
+                  <span>支出百分比</span>
+                  <span className={monthProgress > 90 ? 'text-red-400' : 'text-emerald-400'}>
+                    {monthProgress.toFixed(1)}%
+                  </span>
+                </div>
+                <div className="h-3 bg-white/5 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min(100, monthProgress)}%` }}
+                    className={`h-full transition-all duration-1000 ease-out ${
+                      monthProgress > 90 ? 'bg-red-500' : monthProgress > 70 ? 'bg-amber-500' : 'bg-emerald-500'
+                    }`}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {!state.isInitialized ? (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
