@@ -8,12 +8,12 @@
   "theme_color": "#10B981",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='128' fill='%23000000'/%3E%3Cpath d='M400 160H112c-26.5 0-48 21.5-48 48v192c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V208c0-26.5-21.5-48-48-48zm-16 208c0 8.8-7.2 16-16 16h-64c-8.8 0-16-7.2-16-16v-32c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16v32zm16-144H112v-32c0-8.8 7.2-16 16-16h256c8.8 0 16 7.2 16 16v32z' fill='%2310B981'/%3E%3C/svg%3E",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='128' fill='%23000000'/%3E%3Cpath d='M380 240V170H160c-20 0-35-15-35-35s15-35 35-35h220v35M130 140v230c0 20 15 35 35 35h220v-80M340 240c0 15 12 25 25 25h35v-50h-35c-13 0-25 10-25 25z' fill='none' stroke='%2310B981' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
       "sizes": "192x192",
       "type": "image/svg+xml"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='128' fill='%23000000'/%3E%3Cpath d='M400 160H112c-26.5 0-48 21.5-48 48v192c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V208c0-26.5-21.5-48-48-48zm-16 208c0 8.8-7.2 16-16 16h-64c-8.8 0-16-7.2-16-16v-32c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16v32zm16-144H112v-32c0-8.8 7.2-16 16-16h256c8.8 0 16 7.2 16 16v32z' fill='%2310B981'/%3E%3C/svg%3E",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='128' fill='%23000000'/%3E%3Cpath d='M380 240V170H160c-20 0-35-15-35-35s15-35 35-35h220v35M130 140v230c0 20 15 35 35 35h220v-80M340 240c0 15 12 25 25 25h35v-50h-35c-13 0-25 10-25 25z' fill='none' stroke='%2310B981' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
       "sizes": "512x512",
       "type": "image/svg+xml"
     }

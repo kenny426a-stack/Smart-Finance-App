@@ -296,43 +296,43 @@ export default function App() {
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-[#1A1B1E] p-6 rounded-3xl border border-white/5 shadow-xl"
+              className="bg-[#1A1B1E] p-6 rounded-3xl border border-white/5 shadow-xl relative overflow-hidden"
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-emerald-400">
-                    <PieChart size={20} />
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <h3 className="font-bold text-lg">本月預算進度</h3>
+                      <p className="text-xs text-white/40 uppercase tracking-widest font-bold">Monthly Spending</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-sm">本月預算進度</h3>
-                    <p className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Monthly Spending</p>
+                  <div className="text-right">
+                    <div className="text-3xl font-bold text-white">
+                      ${totalSpentMonth.toFixed(0)}<span className="text-lg text-white/20 font-medium ml-1">/ ${totalBudgetMonth.toFixed(0)}</span>
+                    </div>
+                    <div className="text-[10px] uppercase tracking-widest text-white/30 font-bold">已使用 / 總額</div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-xl font-bold text-white">
-                    ${totalSpentMonth.toFixed(0)} <span className="text-white/20 text-sm font-medium">/ ${totalBudgetMonth.toFixed(0)}</span>
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-bold text-white/60">
+                    <span>支出百分比</span>
+                    <span className={monthProgress > 90 ? 'text-red-400' : 'text-emerald-400'}>
+                      {monthProgress.toFixed(1)}%
+                    </span>
                   </div>
-                  <div className="text-[10px] uppercase tracking-widest text-white/30 font-bold">已使用 / 總額</div>
+                  <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min(100, monthProgress)}%` }}
+                      className={`h-full transition-all duration-1000 ease-out ${
+                        monthProgress > 90 ? 'bg-red-500' : monthProgress > 70 ? 'bg-amber-500' : 'bg-emerald-500'
+                      }`}
+                    />
+                  </div>
                 </div>
               </div>
-              
-              <div className="space-y-2">
-                <div className="flex justify-between text-[10px] font-bold text-white/40 uppercase tracking-wider">
-                  <span>支出百分比</span>
-                  <span className={monthProgress > 90 ? 'text-red-400' : 'text-emerald-400'}>
-                    {monthProgress.toFixed(1)}%
-                  </span>
-                </div>
-                <div className="h-3 bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(100, monthProgress)}%` }}
-                    className={`h-full transition-all duration-1000 ease-out ${
-                      monthProgress > 90 ? 'bg-red-500' : monthProgress > 70 ? 'bg-amber-500' : 'bg-emerald-500'
-                    }`}
-                  />
-                </div>
-              </div>
+              <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/5 blur-3xl rounded-full" />
             </motion.div>
           )}
 
